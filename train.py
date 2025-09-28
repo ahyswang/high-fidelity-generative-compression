@@ -225,7 +225,8 @@ if __name__ == '__main__':
     general.add_argument("-lt", "--likelihood_type", choices=('gaussian', 'logistic'), default='gaussian', help="Likelihood model for latents.")
     general.add_argument("-force_gpu", "--force_set_gpu", help="Set GPU to given ID", action="store_true")
     general.add_argument("-LMM", "--use_latent_mixture_model", help="Use latent mixture model as latent entropy model.", action="store_true")
-
+    general.add_argument("--use_debugpy", help="Use debugpy for debugging.", action="store_true")
+    
     # Optimization-related options
     optim_args = parser.add_argument_group("Optimization-related options")
     optim_args.add_argument('-steps', '--n_steps', type=float, default=hific_args.n_steps, 
@@ -248,6 +249,12 @@ if __name__ == '__main__':
     warmstart_args.add_argument("-ckpt", "--warmstart_ckpt", default=None, help="Path to autoencoder + hyperprior ckpt.")
 
     cmd_args = parser.parse_args()
+
+    if cmd_args.use_debugpy:
+        import debugpy
+        print("localhost start ---------------------")
+        debugpy.listen(("localhost", 56789))
+        debugpy.wait_for_client()
 
     if (cmd_args.gpu != 0) or (cmd_args.force_set_gpu is True):
         torch.cuda.set_device(cmd_args.gpu)
